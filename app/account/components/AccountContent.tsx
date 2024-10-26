@@ -1,6 +1,5 @@
 "use client";
 
-import Box from "@/components/Box";
 import Button from "@/components/Button";
 import useSubscribeModal from "@/hooks/useSubscribeModal";
 import { useUser } from "@/hooks/useUser";
@@ -9,23 +8,23 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
-const AccountContent = () => {
+const AccountContent: React.FC = () => {
     const router = useRouter();
     const subscribeModal = useSubscribeModal();
-    const { isLoading, subscription, user } = useUser();
+    const { user, subscription, isLoading: isLoadingSubscription } = useUser();
     
     const [loading, setLoading] = useState(false);
     
     useEffect(() => {
-        if (!isLoading && !user) {
+        if (!isLoadingSubscription && !user) {
             router.replace("/");
         }
-    },[isLoading,user,router]);
+    },[isLoadingSubscription,user,router]);
 
     const redirectToCustomerPortal = async () => {
         setLoading(true);
         try {
-            const { url,error } = await postData({
+            const { url } = await postData({
                 url: "/api/create-portal-link",
             });
             window.location.assign(url);
@@ -53,7 +52,7 @@ const AccountContent = () => {
                 <div className="flex flex-col gap-y-4">
                     <p>You are currently on the <b>{subscription?.prices?.products?.name}</b> plan.</p>
                     <Button
-                        disabled={loading || isLoading}
+                        disabled={loading || isLoadingSubscription}
                         onClick={redirectToCustomerPortal}
                         className="w-[300px]"
                     >
