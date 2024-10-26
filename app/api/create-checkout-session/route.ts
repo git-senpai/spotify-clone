@@ -1,5 +1,6 @@
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
-import { headers, cookies } from "next/headers";
+// import { headers } from "next/headers";
+import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { stripe } from "@/libs/stripe";
 import { getURL } from "@/libs/helpers";
@@ -19,19 +20,18 @@ export async function POST(request: Request) {
         });
 
         const session = await stripe.checkout.sessions.create({
-            payment_method_types: ["card"],
-            billing_address_collection: "required",
+            payment_method_types: ['card'],
+            billing_address_collection: 'required',
             customer,
             line_items: [
                 {
-                    price:price.id,
+                    price: price.id,
                     quantity,
                 }
             ],
-            mode: "subscription",
+            mode: 'subscription',
             allow_promotion_codes: true,
             subscription_data: {
-                trial_from_plan: true,
                 metadata,
             },
             success_url: `${getURL()}/account`,

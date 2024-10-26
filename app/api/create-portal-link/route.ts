@@ -5,7 +5,9 @@ import { stripe } from "@/libs/stripe";
 import { getURL } from "@/libs/helpers";
 import { createOrRetrieveCustomer } from "@/libs/supabaseAdmin";
 
-export async function POST() {
+export async function POST(
+  request: Request
+): Promise<Response> {
     try {
         const supabase = createRouteHandlerClient({ cookies });
 
@@ -19,6 +21,8 @@ export async function POST() {
         });
 
         if (!customer) throw new Error('Could not get customer');
+
+        const { sessionId }: { sessionId: string } = await request.json();
 
         const { url } = await stripe.billingPortal.sessions.create({
             customer,

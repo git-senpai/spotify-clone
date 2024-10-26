@@ -15,7 +15,7 @@ const relevantEvents = new Set([
     "customer.subscription.deleted",
 ]);
 
-export async function POST(request: Request) {
+export async function POST(request: Request): Promise<Response> {
     const body = await request.text();
     const sig = headers().get("stripe-signature");
 
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     let event: Stripe.Event;
 
     try {
-        if (!sig || !webhookSecret) return;
+        if (!sig || !webhookSecret) return new NextResponse('Webhook secret or signature missing', { status: 400 });
         event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
     } catch (error: any) {
         console.log(`❌ Error message: ${error.message}`);
@@ -75,4 +75,3 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ received: true }, { status: 200 });
 };
-
